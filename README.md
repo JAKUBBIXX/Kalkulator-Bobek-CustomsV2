@@ -219,15 +219,15 @@
   <canvas id="bgCanvas" aria-hidden="true"></canvas>
   <canvas id="fxCanvas" aria-hidden="true"></canvas>
 
-  <main class="app" id="app" role="application" aria-label="Kalkulator Benny's">
+  <main class="app" id="app" role="application" aria-label="Kalkulator Bobek Custom">
     <header>
       <div class="brand" aria-hidden="true">
-        <div class="logo" title="Benny's">
+        <div class="logo" title="Bobek Custom">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 13l1.6-4.2A2 2 0 0 1 6.5 8h11a2 2 0 0 1 1.9 1.3L21 13v4a1 1 0 0 1-1 1h-1a1.5 1.5 0 1 0-3 0H9.1a1.5 1.5 0 1 0-3 0H5a1 1 0 0 1-1-1v-4z" fill="currentColor"/></svg>
         </div>
         <div>
-          <h1>Kalkulator Benny's</h1>
-          <p class="lead">Kalkulator dla pracowników Benny's</p>
+          <h1>Kalkulator Bobek Customs</h1>
+          <p class="lead">Kalkulator dla pracowników Bobek Custom</p>
         </div>
       </div>
 
