@@ -1,15 +1,31 @@
 
-<!doctype html>
 <html lang="pl">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Kalkulator Bobek Customs — Red Edition (v2)</title>
+<title>Kalkulator Bobek Customs — Cyan Edition (v2)</title>
 <meta name="description" content="Kalkulator dla pracowników Bobek Customs" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
+    --bg:#070506;
+    --card:#11090a;
+    --muted:#a7a0a2;
+    --accent:#00d4ff;       /* primary cyan */
+    --accent-2:#0099cc;     /* stronger cyan */
+    --accent-glow: rgba(0,212,255,0.14);
+    --success:#22c55e;
+    --danger:#ef4444;
+    --glass: rgba(255,255,255,0.02);
+    --radius:12px;
+    --gap:14px;
+    --shadow: 0 10px 40px rgba(2,6,23,0.7);
+    --mono: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    --tab-active: rgba(0,212,255,0.10);
+    --tab-border: rgba(255,255,255,0.03);
+    --small: 0.86rem;
+  }
     --bg:#070506;
     --card:#11090a;
     --muted:#a7a0a2;
