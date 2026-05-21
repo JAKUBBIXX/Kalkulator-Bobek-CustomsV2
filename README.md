@@ -26,23 +26,6 @@
     --tab-border: rgba(255,255,255,0.03);
     --small: 0.86rem;
   }
-    --bg:#070506;
-    --card:#11090a;
-    --muted:#a7a0a2;
-    --accent:#ff4d4f;       /* primary red */
-    --accent-2:#ff1f3a;     /* stronger red */
-    --accent-glow: rgba(255,77,79,0.14);
-    --success:#22c55e;
-    --danger:#ef4444;
-    --glass: rgba(255,255,255,0.02);
-    --radius:12px;
-    --gap:14px;
-    --shadow: 0 10px 40px rgba(2,6,23,0.7);
-    --mono: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-    --tab-active: rgba(255,77,79,0.10);
-    --tab-border: rgba(255,255,255,0.03);
-    --small: 0.86rem;
-  }
 
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
@@ -95,7 +78,7 @@
     width:42px; height:42px;
     display:inline-grid; place-items:center;
     border-radius:10px;
-    background:linear-gradient(135deg, rgba(255,77,79,0.12), rgba(255,31,58,0.06));
+    background:linear-gradient(135deg, rgba(0,212,255,0.12), rgba(0,153,204,0.06));
     border:1px solid rgba(255,255,255,0.03);
     flex-shrink:0;
   }
@@ -156,8 +139,8 @@
   .tab.active{
     background:var(--tab-active);
     color:var(--accent);
-    box-shadow:0 8px 24px rgba(255,77,79,0.06);
-    border-color: rgba(255,77,79,0.14);
+    box-shadow:0 8px 24px rgba(0,212,255,0.06);
+    border-color: rgba(0,212,255,0.14);
   }
 
   .list{ display:flex; flex-direction:column; gap:10px; max-height:62vh; overflow:auto; padding-right:6px; }
@@ -180,7 +163,7 @@
 
   .service:focus-within, .service:hover{
     transform:translateY(-4px);
-    background:linear-gradient(90deg, rgba(255,77,79,0.02), rgba(255,31,58,0.01));
+    background:linear-gradient(90deg, rgba(0,212,255,0.02), rgba(0,153,204,0.01));
     box-shadow: 0 8px 30px rgba(2,6,23,0.6);
   }
 
@@ -209,17 +192,13 @@
   }
   .totalLabel{ font-size:0.9rem; color:var(--muted); margin-bottom:6px }
   .totalValue{ font-weight:800; font-size:2.05rem; color:var(--accent); display:flex; align-items:baseline; gap:8px; will-change:transform, box-shadow; }
-  .totalValue.glow{ box-shadow: 0 10px 48px rgba(255,31,58,0.25); transform: scale(1.04); transition: transform .28s, box-shadow .28s; }
+  .totalValue.glow{ box-shadow: 0 10px 48px rgba(0,212,255,0.25); transform: scale(1.04); transition: transform .28s, box-shadow .28s; }
 
   .small{ color:var(--muted); font-size:0.9rem; }
   .actions{ display:flex; gap:8px; margin-top:4px; }
   .actionBtn{ flex:1; padding:10px 12px; border-radius:10px; border:0; cursor:pointer; font-weight:700; letter-spacing:.2px; font-size:0.95rem; }
   .clear{ background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03); }
   .checkout{ background:linear-gradient(90deg,var(--accent) 0%,var(--accent-2) 100%); color:#071014; }
-  .discountBtn{ background:transparent; color:var(--accent); border:1px solid rgba(255,77,79,0.25); }
-  .discountBtn.active{ background:linear-gradient(90deg,var(--accent) 0%,var(--accent-2) 100%); color:#071014; box-shadow:0 6px 20px var(--accent-glow); }
-  .discountInfo{ font-size:0.86rem; color:var(--muted); line-height:1.35; }
-  .discountInfo strong{ color:var(--accent); }
 
   .list::-webkit-scrollbar{ width:8px }
   .list::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.03); border-radius:8px }
@@ -235,15 +214,15 @@
   <canvas id="bgCanvas" aria-hidden="true"></canvas>
   <canvas id="fxCanvas" aria-hidden="true"></canvas>
 
-  <main class="app" id="app" role="application" aria-label="Kalkulator Bobek Custom">
+  <main class="app" id="app" role="application" aria-label="Kalkulator Benny's">
     <header>
       <div class="brand" aria-hidden="true">
-        <div class="logo" title="Bobek Custom">
+        <div class="logo" title="Bobek Customs">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 13l1.6-4.2A2 2 0 0 1 6.5 8h11a2 2 0 0 1 1.9 1.3L21 13v4a1 1 0 0 1-1 1h-1a1.5 1.5 0 1 0-3 0H9.1a1.5 1.5 0 1 0-3 0H5a1 1 0 0 1-1-1v-4z" fill="currentColor"/></svg>
         </div>
         <div>
           <h1>Kalkulator Bobek Customs</h1>
-          <p class="lead">Kalkulator dla pracowników Bobek Custom</p>
+          <p class="lead">Kalkulator dla pracowników Bobek Customs</p>
         </div>
       </div>
 
@@ -267,18 +246,17 @@
       </div>
 
       <aside class="summary" aria-label="Podsumowanie zamówienia"> 
-      <div id="wybrane-czesci" style="margin-top:24px;padding:20px;background:#000;border:2px solid #ff243d;border-radius:12px;color:#fff;">
-  <h3 style="margin:0 0 16px;text-align:center;color:#ff243d;font-size:1.3rem;font-weight:700;">Twoje podsumowanie</h3>
- <pre id="lista-wybranych" style="background:#111;padding:12px;border-radius:10px;white-space:pre-wrap;font-family:monospace;font-size:0.85rem;color:#fff;min-height:100px;margin:0;line-height:1.35;border:1px solid #ff243d33;overflow-y:auto;max-height:300px;">
+      <div id="wybrane-czesci" style="margin-top:24px;padding:20px;background:#000;border:2px solid #00d4ff;border-radius:12px;color:#fff;">
+  <h3 style="margin:0 0 16px;text-align:center;color:#00d4ff;font-size:1.3rem;font-weight:700;">Twoje podsumowanie</h3>
+ <pre id="lista-wybranych" style="background:#111;padding:12px;border-radius:10px;white-space:pre-wrap;font-family:monospace;font-size:0.85rem;color:#fff;min-height:100px;margin:0;line-height:1.35;border:1px solid #00d4ff33;overflow-y:auto;max-height:300px;">
 Nic nie wybrano jeszcze.
 </pre>
-  <button id="kopiuj-liste-btn" style="margin-top:16px;width:100%;padding:14px;background:#ff243d;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:1.1rem;cursor:pointer;">
+  <button id="kopiuj-liste-btn" style="margin-top:16px;width:100%;padding:14px;background:#00d4ff;color:#000;border:none;border-radius:8px;font-weight:700;font-size:1.1rem;cursor:pointer;">
     Kopiuj podsumowanie
   </button>
 </div>
-        <button class="actionBtn discountBtn" id="discount25Btn" title="Obniż cenę o 25%">25% zniżki: OFF</button>
-        <div class="discountInfo" id="discountInfo">Zniżka nieaktywna.</div>
-
+<button class="actionBtn discountBtn" id="discount25Btn" title="Obniż cenę o 25%">25% zniżki: OFF</button>
+        <div class="discountInfo" id="discountInfo">Zniżka nieaktywna.</div>    
         <div>
           <div class="totalLabel">Kwota całkowita</div>
           <div class="totalValue" id="totalWrap" aria-live="polite">
@@ -301,7 +279,7 @@ Nic nie wybrano jeszcze.
 <script>
 /*
   What's new in v2:
-  - Color stays red, but added:
+  - Color stays cyan, but added:
     - Search box (live filter).
     - FX toggle (on/off) and Confetti toggle for extra dramatic effect.
     - Share (copy link) with encoded cart state.
@@ -317,11 +295,13 @@ const SERVICES = [
   {title:"Pełna naprawa", price:20000, cat:"Naprawy"},
   {title:"Mycie", price:15000, cat:"Naprawy"},
   {title:"Otwarcie zamka", price:80000, cat:"Naprawy"},
-  {title:"Kolor głowny", price:25000, cat:"Lakierowanie"},
+
+  {title:"Kolor główny", price:25000, cat:"Lakierowanie"},
   {title:"Kolor dodatkowy", price:25000, cat:"Lakierowanie"},
-  {title:"Kolor perłowy", price:25000, cat:"Lakierowanie"},
   {title:"Kolor wnętrza", price:30000, cat:"Lakierowanie"},
   {title:"Kolor deski", price:30000, cat:"Lakierowanie"},
+  {title:"Kolor perłowy", price:30000, cat:"Lakierowanie"},
+
   {title:"Xenony", price:20000, cat:"Światła"},
   {title:"Układ lewa strona (neon)", price:25000, cat:"Neony"},
   {title:"Układ prawa strona (neon)", price:25000, cat:"Neony"},
@@ -329,11 +309,14 @@ const SERVICES = [
   {title:"Układ przód (neon)", price:25000, cat:"Neony"},
   {title:"Full pakiet neonów", price:100000, cat:"Neony"},
   {title:"Kolor neonów", price:25000, cat:"Neony"},
+
   {title:"Zmiana felgi", price:30000, cat:"Opony"},
   {title:"Zmiana koloru felgi", price:30000, cat:"Opony"},
   {title:"Zmiana dymy spod opon", price:30000, cat:"Opony"},
   {title:"Opony niestandardowe (napisy)", price:30000, cat:"Opony"},
+
   {title:"Zmiana koloru szyb", price:30000, cat:"Szyby"},
+
   {title:"Klapa", price:40000, cat:"Karoseria"},
   {title:"Progi", price:40000, cat:"Karoseria"},
   {title:"Wydech", price:40000, cat:"Karoseria"},
@@ -346,22 +329,22 @@ const SERVICES = [
   {title:"Naklejki", price:40000, cat:"Karoseria"},
   {title:"Zderzaki", price:40000, cat:"Karoseria"},
   {title:"Extrasy / Każda część", price:60000, cat:"Karoseria"},
+
   {title:"Zmiana klaksonu", price:30000, cat:"Inne"},
   {title:"Pneumatyka", price:100000, cat:"Inne"},
   {title:"Zmiana koloru tablic", price:30000, cat:"Inne"},
-  {title:"Zmiana ramki tablicy", price:30000, cat:"Inne"}
+  {title:"Zmiana ramki tablicy", price:25000, cat:"Inne"}
 ];
-
+  
 const CATS = ["Wszystkie", ...Array.from(new Set(SERVICES.map(s=>s.cat)))];
 
-const STORAGE_KEY = 'bennys_red_v2_state';
-const SETTINGS_KEY = 'bennys_red_v2_settings';
+const STORAGE_KEY = 'bennys_cyan_v2_state';
+const SETTINGS_KEY = 'bennys_cyan_v2_settings';
 let state = {
   counts: new Array(SERVICES.length).fill(0),
   total: 0,
   selectedCat: "Wszystkie",
-  collapsed: {},
-  discount25: false
+  collapsed: {}
 };
 let settings = {
   fx: true,
@@ -370,10 +353,9 @@ let settings = {
 };
 
 function fmt(n){ return n.toLocaleString('pl-PL'); }
-function getDiscountedTotal(){ return state.discount25 ? Math.round(state.total * 0.75) : state.total; }
 
 function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
-function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ const s = JSON.parse(raw); if(Array.isArray(s.counts) && typeof s.total === 'number'){ const arr = new Array(SERVICES.length).fill(0); for(let i=0;i<Math.min(arr.length, s.counts.length); i++) arr[i] = Number(s.counts[i])||0; state.counts = arr; state.total = Number(s.total)||0; if(s.selectedCat) state.selectedCat = s.selectedCat; if(s.collapsed) state.collapsed = s.collapsed; if(typeof s.discount25 === 'boolean') state.discount25 = s.discount25; } } }catch(e){} }
+function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ const s = JSON.parse(raw); if(Array.isArray(s.counts) && typeof s.total === 'number'){ const arr = new Array(SERVICES.length).fill(0); for(let i=0;i<Math.min(arr.length, s.counts.length); i++) arr[i] = Number(s.counts[i])||0; state.counts = arr; state.total = Number(s.total)||0; if(s.selectedCat) state.selectedCat = s.selectedCat; if(s.collapsed) state.collapsed = s.collapsed; } } }catch(e){} }
 function saveSettings(){ try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }catch(e){} }
 function loadSettings(){ try{ const raw = localStorage.getItem(SETTINGS_KEY); if(raw){ const s = JSON.parse(raw); if(typeof s.fx === 'boolean') settings.fx = s.fx; if(typeof s.confetti === 'boolean') settings.confetti = s.confetti; if(typeof s.particleIntensity === 'number') settings.particleIntensity = s.particleIntensity; } }catch(e){} }
 
@@ -388,8 +370,6 @@ const fxToggle = document.getElementById('fxToggle');
 const confettiToggle = document.getElementById('confettiToggle');
 const searchInput = document.getElementById('searchInput');
 const shareBtn = document.getElementById('shareBtn');
-const discount25Btn = document.getElementById('discount25Btn');
-const discountInfo = document.getElementById('discountInfo');
 
 loadState();
 loadSettings();
@@ -595,19 +575,7 @@ function updateUI(){
     const el = document.getElementById('count-' + i);
     if(el) el.textContent = c;
   });
-  totalEl.textContent = fmt(getDiscountedTotal());
-  if(discount25Btn){
-    discount25Btn.classList.toggle('active', state.discount25);
-    discount25Btn.textContent = state.discount25 ? '25% zniżki: ON' : '25% zniżki: OFF';
-  }
-  if(discountInfo){
-    if(state.discount25 && state.total > 0){
-      const znizka = state.total - getDiscountedTotal();
-      discountInfo.innerHTML = `Cena przed zniżką: <strong>${fmt(state.total)} $</strong><br>Obniżono o: <strong>${fmt(znizka)} $</strong>`;
-    } else {
-      discountInfo.textContent = 'Zniżka nieaktywna.';
-    }
-  }
+  totalEl.textContent = fmt(state.total);
   itemsCountEl.textContent = state.counts.reduce((a,b)=>a+b, 0);
 
   tabsEl.querySelectorAll('.tab').forEach((t, idx) => {
@@ -633,7 +601,7 @@ let animFrame = null;
 function animateTotal(){
   cancelAnimationFrame(animFrame);
   const current = Number(String(totalEl.textContent).replace(/\s/g,'')) || 0;
-  const target = getDiscountedTotal();
+  const target = state.total;
   const duration = 420;
   const start = performance.now();
   function tick(now){
@@ -671,7 +639,6 @@ function onServiceClick(e){
 document.getElementById('resetBtn').addEventListener('click', ()=> {
   state.counts = new Array(SERVICES.length).fill(0);
   state.total = 0;
-  state.discount25 = false;
   persistAndRender();
   createTabs();
   renderListAnimated();
@@ -688,7 +655,7 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
 
 /* Share: encode state in URL (base64) and copy */
 shareBtn.addEventListener('click', async () => {
-  const payload = { counts: state.counts, total: state.total, discount25: state.discount25 };
+  const payload = { counts: state.counts, total: state.total };
   const encoded = btoa(JSON.stringify(payload));
   const url = new URL(location.href);
   url.searchParams.set('state', encoded);
@@ -716,22 +683,11 @@ shareBtn.addEventListener('click', async () => {
           state.counts[i] = Number(obj.counts[i]) || 0;
         }
         state.total = Number(obj.total) || state.counts.reduce((sum, c, i) => sum + (c * SERVICES[i].price), 0);
-        state.discount25 = !!obj.discount25;
         saveState();
       }
     }
   } catch(e){}
 })();
-
-
-if (discount25Btn) {
-  discount25Btn.addEventListener('click', () => {
-    state.discount25 = !state.discount25;
-    saveState();
-    animateTotal();
-    updateUI();
-  });
-}
 
 /* Shortcuts */
 document.addEventListener('keydown', (e) => {
@@ -776,7 +732,7 @@ updateFxUi();
       vx: (Math.random()-0.5)*0.3,
       vy: (Math.random()-0.5)*0.3,
       r: Math.random()*2 + 1,
-      hue: 350 + Math.random()*20 // red-ish
+      hue: 180 + Math.random()*20 // cyan-ish
     });
   }
 
@@ -796,8 +752,8 @@ updateFxUi();
     last = now;
     ctx.clearRect(0,0,w,h);
     const g = ctx.createLinearGradient(0,0,w,h);
-    g.addColorStop(0, 'rgba(255,77,79,0.01)');
-    g.addColorStop(1, 'rgba(255,31,58,0.01)');
+    g.addColorStop(0, 'rgba(0,212,255,0.01)');
+    g.addColorStop(1, 'rgba(0,153,204,0.01)');
     ctx.fillStyle = g;
     ctx.fillRect(0,0,w,h);
 
@@ -871,7 +827,7 @@ updateFxUi();
         angle: Math.random()*Math.PI*2,
         speed: (Math.random()*3 + 2) * (0.8 + Math.random()*settings.particleIntensity),
         r: Math.random()*3 + 1,
-        hue: 350 + Math.random()*40,
+        hue: 180 + Math.random()*40,
         life: 480 + Math.random()*440,
       });
     }
@@ -889,7 +845,7 @@ updateFxUi();
     s.style.width = '120px';
     s.style.height = '120px';
     s.style.borderRadius = '60px';
-    s.style.boxShadow = `0 0 44px 10px rgba(255,31,58,0.18)`;
+    s.style.boxShadow = `0 0 44px 10px rgba(0,212,255,0.18)`;
     document.body.appendChild(s);
     s.animate([{ opacity:1, transform:'scale(.9)' }, { opacity:0, transform:'scale(1.25)' }], { duration:520, easing:'cubic-bezier(.2,.9,.2,1)' });
     setTimeout(()=> s.remove(), 620);
@@ -907,7 +863,7 @@ updateFxUi();
         speed: 2 + Math.random()*5,
         w: 4 + Math.random()*8,
         h: 8 + Math.random()*12,
-        hue: 0 + Math.random()*40,
+        hue: 180 + Math.random()*40,
         life: 900 + Math.random()*600,
         rot: Math.random()*Math.PI*2,
         rotSpeed: (Math.random()-0.5)*0.45
@@ -922,7 +878,7 @@ updateFxUi();
     s.style.width = '180px';
     s.style.height = '180px';
     s.style.borderRadius = '90px';
-    s.style.boxShadow = `0 0 70px 18px rgba(255,31,58,0.14)`;
+    s.style.boxShadow = `0 0 70px 18px rgba(0,212,255,0.14)`;
     document.body.appendChild(s);
     s.animate([{ opacity:1, transform:'scale(.8)' }, { opacity:0, transform:'scale(1.4)' }], { duration:900, easing:'cubic-bezier(.2,.9,.2,1)' });
     setTimeout(()=> s.remove(), 1000);
@@ -993,7 +949,7 @@ function aktualizujListeWybranych() {
   });
   const el = document.getElementById('lista-wybranych');
   if (el) {
-    el.textContent = linie.length ? linie.join('\n') + (state.discount25 ? `\n\nSuma przed zniżką: ${fmt(suma)}$\nZniżka 25%: -${fmt(suma - Math.round(suma * 0.75))}$\nSuma po zniżce: ${fmt(Math.round(suma * 0.75))}$` : `\n\nSuma: ${fmt(suma)}$`) : 'Nic nie wybrano jeszcze.';
+    el.textContent = linie.length ? linie.join('\n') + `\n\nSuma: ${fmt(suma)}$` : 'Nic nie wybrano jeszcze.';
   }
 }
 
@@ -1026,7 +982,7 @@ if (guzik && hint) {
     guzik.style.transition = 'all 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
     guzik.style.transform = 'translateY(6px) scale(0.94)';
     guzik.style.boxShadow = 'inset 0 6px 14px rgba(0,0,0,0.6)';
-    guzik.style.background = '#d91e35';
+    guzik.style.background = '#0099cc';
 
     setTimeout(() => {
       guzik.style.transform = 'translateY(-5px) scale(1.05)';
@@ -1036,10 +992,11 @@ if (guzik && hint) {
     setTimeout(() => {
       guzik.style.transform = 'translateY(0) scale(1)';
       guzik.style.boxShadow = 'none';
-      guzik.style.background = '#ff243d';
+      guzik.style.background = '#00d4ff';
     }, 450);
   });
 }
 
 </script>
 </body>
+</html>
