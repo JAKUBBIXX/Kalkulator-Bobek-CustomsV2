@@ -256,8 +256,7 @@ Nic nie wybrano jeszcze.
   </button>
 </div>
 <button class="actionBtn discountBtn" id="discount25Btn" title="Obniż cenę o 25%">25% zniżki: OFF</button>
-        <div class="discountInfo" id="discountInfo">Zniżka nieaktywna.</div>
-
+        <div class="discountInfo" id="discountInfo">Zniżka nieaktywna.</div>    
         <div>
           <div class="totalLabel">Kwota całkowita</div>
           <div class="totalValue" id="totalWrap" aria-live="polite">
