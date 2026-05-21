@@ -4,8 +4,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Kalkulator Benny's — Red Edition (v2)</title>
-<meta name="description" content="Kalkulator dla pracowników Benny's" />
+<title>Kalkulator Bobek Customs — Red Edition (v2)</title>
+<meta name="description" content="Kalkulator dla pracowników Bobek Customs" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
