@@ -259,6 +259,9 @@ Nic nie wybrano jeszcze.
     Kopiuj podsumowanie
   </button>
 </div>
+        <button class="actionBtn discountBtn" id="discount20Btn" title="Obniż cenę o 20%">20% zniżki: OFF</button>
+        <div class="discountInfo" id="discountInfo20">Zniżka nieaktywna.</div>
+
         <button class="actionBtn discountBtn" id="discount25Btn" title="Obniż cenę o 25%">25% zniżki: OFF</button>
         <div class="discountInfo" id="discountInfo">Zniżka nieaktywna.</div>
 
@@ -292,6 +295,7 @@ Nic nie wybrano jeszcze.
     - "Wszystkie" now grouped by category (collapsible as before).
     - Performance tweaks: lower particle counts, throttled pointer updates, reuse bursts, optimized rAF loops.
     - Settings persisted separately (FX on/off, confetti).
+    - 20% and 25% discount buttons
   - UX: small hints, keyboard shortcuts unchanged.
 */
 
@@ -344,6 +348,7 @@ let state = {
   total: 0,
   selectedCat: "Wszystkie",
   collapsed: {},
+  discount20: false,
   discount25: false
 };
 let settings = {
@@ -353,10 +358,14 @@ let settings = {
 };
 
 function fmt(n){ return n.toLocaleString('pl-PL'); }
-function getDiscountedTotal(){ return state.discount25 ? Math.round(state.total * 0.75) : state.total; }
+function getDiscountedTotal(){
+  if(state.discount20) return Math.round(state.total * 0.80);
+  if(state.discount25) return Math.round(state.total * 0.75);
+  return state.total;
+}
 
 function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
-function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ const s = JSON.parse(raw); if(Array.isArray(s.counts) && typeof s.total === 'number'){ const arr = new Array(SERVICES.length).fill(0); for(let i=0;i<Math.min(arr.length, s.counts.length); i++) arr[i] = Number(s.counts[i])||0; state.counts = arr; state.total = Number(s.total)||0; if(s.selectedCat) state.selectedCat = s.selectedCat; if(s.collapsed) state.collapsed = s.collapsed; if(typeof s.discount25 === 'boolean') state.discount25 = s.discount25; } } }catch(e){} }
+function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ const s = JSON.parse(raw); if(Array.isArray(s.counts) && typeof s.total === 'number'){ const arr = new Array(SERVICES.length).fill(0); for(let i=0;i<Math.min(arr.length, s.counts.length); i++) arr[i] = Number(s.counts[i])||0; state.counts = arr; state.total = Number(s.total)||0; if(s.selectedCat) state.selectedCat = s.selectedCat; if(s.collapsed) state.collapsed = s.collapsed; if(typeof s.discount20 === 'boolean') state.discount20 = s.discount20; if(typeof s.discount25 === 'boolean') state.discount25 = s.discount25; } } }catch(e){} }
 function saveSettings(){ try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }catch(e){} }
 function loadSettings(){ try{ const raw = localStorage.getItem(SETTINGS_KEY); if(raw){ const s = JSON.parse(raw); if(typeof s.fx === 'boolean') settings.fx = s.fx; if(typeof s.confetti === 'boolean') settings.confetti = s.confetti; if(typeof s.particleIntensity === 'number') settings.particleIntensity = s.particleIntensity; } }catch(e){} }
 
@@ -371,6 +380,8 @@ const fxToggle = document.getElementById('fxToggle');
 const confettiToggle = document.getElementById('confettiToggle');
 const searchInput = document.getElementById('searchInput');
 const shareBtn = document.getElementById('shareBtn');
+const discount20Btn = document.getElementById('discount20Btn');
+const discountInfo20 = document.getElementById('discountInfo20');
 const discount25Btn = document.getElementById('discount25Btn');
 const discountInfo = document.getElementById('discountInfo');
 
@@ -579,6 +590,18 @@ function updateUI(){
     if(el) el.textContent = c;
   });
   totalEl.textContent = fmt(getDiscountedTotal());
+  if(discount20Btn){
+    discount20Btn.classList.toggle('active', state.discount20);
+    discount20Btn.textContent = state.discount20 ? '20% zniżki: ON' : '20% zniżki: OFF';
+  }
+  if(discountInfo20){
+    if(state.discount20 && state.total > 0){
+      const znizka = state.total - getDiscountedTotal();
+      discountInfo20.innerHTML = `Cena przed zniżką: <strong>${fmt(state.total)} $</strong><br>Obniżono o: <strong>${fmt(znizka)} $</strong>`;
+    } else {
+      discountInfo20.textContent = 'Zniżka nieaktywna.';
+    }
+  }
   if(discount25Btn){
     discount25Btn.classList.toggle('active', state.discount25);
     discount25Btn.textContent = state.discount25 ? '25% zniżki: ON' : '25% zniżki: OFF';
@@ -654,6 +677,7 @@ function onServiceClick(e){
 document.getElementById('resetBtn').addEventListener('click', ()=> {
   state.counts = new Array(SERVICES.length).fill(0);
   state.total = 0;
+  state.discount20 = false;
   state.discount25 = false;
   persistAndRender();
   createTabs();
@@ -671,7 +695,7 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
 
 /* Share: encode state in URL (base64) and copy */
 shareBtn.addEventListener('click', async () => {
-  const payload = { counts: state.counts, total: state.total, discount25: state.discount25 };
+  const payload = { counts: state.counts, total: state.total, discount20: state.discount20, discount25: state.discount25 };
   const encoded = btoa(JSON.stringify(payload));
   const url = new URL(location.href);
   url.searchParams.set('state', encoded);
@@ -699,6 +723,7 @@ shareBtn.addEventListener('click', async () => {
           state.counts[i] = Number(obj.counts[i]) || 0;
         }
         state.total = Number(obj.total) || state.counts.reduce((sum, c, i) => sum + (c * SERVICES[i].price), 0);
+        state.discount20 = !!obj.discount20;
         state.discount25 = !!obj.discount25;
         saveState();
       }
@@ -707,9 +732,20 @@ shareBtn.addEventListener('click', async () => {
 })();
 
 
+if (discount20Btn) {
+  discount20Btn.addEventListener('click', () => {
+    state.discount20 = !state.discount20;
+    state.discount25 = false;
+    saveState();
+    animateTotal();
+    updateUI();
+  });
+}
+
 if (discount25Btn) {
   discount25Btn.addEventListener('click', () => {
     state.discount25 = !state.discount25;
+    state.discount20 = false;
     saveState();
     animateTotal();
     updateUI();
@@ -976,7 +1012,13 @@ function aktualizujListeWybranych() {
   });
   const el = document.getElementById('lista-wybranych');
   if (el) {
-    el.textContent = linie.length ? linie.join('\n') + (state.discount25 ? `\n\nSuma przed zniżką: ${fmt(suma)}$\nZniżka 25%: -${fmt(suma - Math.round(suma * 0.75))}$\nSuma po zniżce: ${fmt(Math.round(suma * 0.75))}$` : `\n\nSuma: ${fmt(suma)}$`) : 'Nic nie wybrano jeszcze.';
+    if(state.discount20){
+      el.textContent = linie.length ? linie.join('\n') + `\n\nSuma przed zniżką: ${fmt(suma)}$\nZniżka 20%: -${fmt(suma - Math.round(suma * 0.80))}$\nSuma po zniżce: ${fmt(Math.round(suma * 0.80))}$` : 'Nic nie wybrano jeszcze.';
+    } else if(state.discount25){
+      el.textContent = linie.length ? linie.join('\n') + `\n\nSuma przed zniżką: ${fmt(suma)}$\nZniżka 25%: -${fmt(suma - Math.round(suma * 0.75))}$\nSuma po zniżce: ${fmt(Math.round(suma * 0.75))}$` : 'Nic nie wybrano jeszcze.';
+    } else {
+      el.textContent = linie.length ? linie.join('\n') + `\n\nSuma: ${fmt(suma)}$` : 'Nic nie wybrano jeszcze.';
+    }
   }
 }
 
