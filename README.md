@@ -189,30 +189,7 @@
     background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
     padding:18px; border-radius:12px; border:1px solid rgba(255,255,255,0.03);
     position:sticky; top:20px; display:flex; flex-direction:column; gap:12px; align-items:stretch;
-    transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.2, 1);
   }
-  .summary.dragging {
-    box-shadow: 0 12px 50px rgba(0, 212, 255, 0.3);
-    border-color: rgba(0, 212, 255, 0.4);
-  }
-  
-  .summary-drag-handle {
-    cursor: grab;
-    padding: 8px 0;
-    margin: -8px 0 4px 0;
-    color: var(--muted);
-    font-size: 0.75rem;
-    text-align: center;
-    user-select: none;
-    transition: color 0.2s;
-  }
-  .summary-drag-handle:hover {
-    color: var(--accent);
-  }
-  .summary-drag-handle:active {
-    cursor: grabbing;
-  }
-  
   .totalLabel{ font-size:0.9rem; color:var(--muted); margin-bottom:6px }
   .totalValue{ font-weight:800; font-size:2.05rem; color:var(--accent); display:flex; align-items:baseline; gap:8px; will-change:transform, box-shadow; }
   .totalValue.glow{ box-shadow: 0 10px 48px rgba(0,212,255,0.25); transform: scale(1.04); transition: transform .28s, box-shadow .28s; }
@@ -272,9 +249,8 @@
         <div class="help-line">Shift+klik = +5, klik = +1. Wyszukaj, wybierz kategorię, udostępnij link (zachowuje Twój koszyk).</div>
       </div>
 
-      <aside class="summary" id="summary" aria-label="Podsumowanie zamówienia"> 
-        <div class="summary-drag-handle" title="Przytrzymaj, aby przenieść panel">⋮ Podsumowanie ⋮</div>
-        <div id="wybrane-czesci" style="margin-top:0px;padding:20px;background:#000;border:2px solid #00d4ff;border-radius:12px;color:#fff;">
+      <aside class="summary" aria-label="Podsumowanie zamówienia"> 
+      <div id="wybrane-czesci" style="margin-top:24px;padding:20px;background:#000;border:2px solid #00d4ff;border-radius:12px;color:#fff;">
   <h3 style="margin:0 0 16px;text-align:center;color:#00d4ff;font-size:1.3rem;font-weight:700;">Twoje podsumowanie</h3>
  <pre id="lista-wybranych" style="background:#111;padding:12px;border-radius:10px;white-space:pre-wrap;font-family:monospace;font-size:0.85rem;color:#fff;min-height:100px;margin:0;line-height:1.35;border:1px solid #00d4ff33;overflow-y:auto;max-height:300px;">
 Nic nie wybrano jeszcze.
@@ -320,7 +296,6 @@ Nic nie wybrano jeszcze.
     - Performance tweaks: lower particle counts, throttled pointer updates, reuse bursts, optimized rAF loops.
     - Settings persisted separately (FX on/off, confetti).
     - 20% and 25% discount buttons
-    - Draggable summary panel
   - UX: small hints, keyboard shortcuts unchanged.
 */
 
@@ -368,8 +343,6 @@ const CATS = ["Wszystkie", ...Array.from(new Set(SERVICES.map(s=>s.cat)))];
 
 const STORAGE_KEY = 'bennys_cyan_v2_state';
 const SETTINGS_KEY = 'bennys_cyan_v2_settings';
-const DRAG_STATE_KEY = 'bennys_cyan_v2_drag';
-
 let state = {
   counts: new Array(SERVICES.length).fill(0),
   total: 0,
@@ -384,10 +357,6 @@ let settings = {
   particleIntensity: 1 // 0.5 .. 2
 };
 
-let dragState = {
-  offsetY: 0
-};
-
 function fmt(n){ return n.toLocaleString('pl-PL'); }
 function getDiscountedTotal(){
   if(state.discount20) return Math.round(state.total * 0.80);
@@ -399,8 +368,6 @@ function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(stat
 function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ const s = JSON.parse(raw); if(Array.isArray(s.counts) && typeof s.total === 'number'){ const arr = new Array(SERVICES.length).fill(0); for(let i=0;i<Math.min(arr.length, s.counts.length); i++) arr[i] = Number(s.counts[i])||0; state.counts = arr; state.total = Number(s.total)||0; if(s.selectedCat) state.selectedCat = s.selectedCat; if(s.collapsed) state.collapsed = s.collapsed; if(typeof s.discount20 === 'boolean') state.discount20 = s.discount20; if(typeof s.discount25 === 'boolean') state.discount25 = s.discount25; } } }catch(e){} }
 function saveSettings(){ try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }catch(e){} }
 function loadSettings(){ try{ const raw = localStorage.getItem(SETTINGS_KEY); if(raw){ const s = JSON.parse(raw); if(typeof s.fx === 'boolean') settings.fx = s.fx; if(typeof s.confetti === 'boolean') settings.confetti = s.confetti; if(typeof s.particleIntensity === 'number') settings.particleIntensity = s.particleIntensity; } }catch(e){} }
-function saveDragState(){ try{ localStorage.setItem(DRAG_STATE_KEY, JSON.stringify(dragState)); }catch(e){} }
-function loadDragState(){ try{ const raw = localStorage.getItem(DRAG_STATE_KEY); if(raw){ const s = JSON.parse(raw); if(typeof s.offsetY === 'number') dragState.offsetY = s.offsetY; } }catch(e){} }
 
 /* DOM refs */
 const listEl = document.getElementById('servicesList');
@@ -417,74 +384,9 @@ const discount20Btn = document.getElementById('discount20Btn');
 const discountInfo20 = document.getElementById('discountInfo20');
 const discount25Btn = document.getElementById('discount25Btn');
 const discountInfo = document.getElementById('discountInfo');
-const summaryEl = document.getElementById('summary');
 
 loadState();
 loadSettings();
-loadDragState();
-
-/* Draggable summary panel */
-(() => {
-  const summary = document.getElementById('summary');
-  const handle = document.querySelector('.summary-drag-handle');
-  let isDragging = false;
-  let startY = 0;
-  let currentOffsetY = dragState.offsetY;
-
-  function updateSummaryPosition(){
-    summary.style.transform = `translateY(${currentOffsetY}px)`;
-    dragState.offsetY = currentOffsetY;
-    saveDragState();
-  }
-
-  handle.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    startY = e.clientY;
-    summary.classList.add('dragging');
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if(!isDragging) return;
-    const delta = e.clientY - startY;
-    currentOffsetY = dragState.offsetY + delta;
-    updateSummaryPosition();
-  });
-
-  document.addEventListener('mouseup', () => {
-    if(isDragging){
-      isDragging = false;
-      summary.classList.remove('dragging');
-      dragState.offsetY = currentOffsetY;
-      saveDragState();
-    }
-  });
-
-  // Touch support
-  handle.addEventListener('touchstart', (e) => {
-    isDragging = true;
-    startY = e.touches[0].clientY;
-    summary.classList.add('dragging');
-  });
-
-  document.addEventListener('touchmove', (e) => {
-    if(!isDragging) return;
-    const delta = e.touches[0].clientY - startY;
-    currentOffsetY = dragState.offsetY + delta;
-    updateSummaryPosition();
-  });
-
-  document.addEventListener('touchend', () => {
-    if(isDragging){
-      isDragging = false;
-      summary.classList.remove('dragging');
-      dragState.offsetY = currentOffsetY;
-      saveDragState();
-    }
-  });
-
-  // Apply initial position
-  updateSummaryPosition();
-})();
 
 /* UI: Tabs */
 function getCategoryCount(cat){
