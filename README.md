@@ -603,7 +603,7 @@ function updateUI(){
     }
   }
   if(discount25Btn){
-    discount25Btn.classList.toggle('active', state.discount30);
+    discount25Btn.classList.toggle('active', state.discount25);
     discount25Btn.textContent = state.discount25 ? '25% zniżki: ON' : '25% zniżki: OFF';
   }
   if(discountInfo){
