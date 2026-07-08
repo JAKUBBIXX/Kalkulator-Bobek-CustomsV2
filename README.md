@@ -92,6 +92,7 @@
     display:flex;
     gap:8px;
     align-items:center;
+    position:relative;
   }
   .search{
     background:rgba(255,255,255,0.02);
@@ -116,6 +117,43 @@
     font-weight:600;
   }
   .small-label{ font-size:0.78rem; color:var(--muted); }
+
+  .theme-dropdown{
+    position:absolute;
+    top:100%;
+    right:0;
+    margin-top:8px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.03);
+    border-radius:10px;
+    padding:12px;
+    min-width:200px;
+    display:none;
+    opacity:0;
+    transform:translateY(-8px);
+    pointer-events:none;
+    transition:opacity .2s, transform .2s;
+    z-index:100;
+  }
+
+  .theme-dropdown.visible{
+    display:block;
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+  }
+
+  .theme-label-header{ font-size:0.85rem; color:var(--muted); margin-bottom:10px; display:block; font-weight:600; }
+  .theme-colors{ display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; }
+  .theme-btn{
+    width:100%; aspect-ratio:1;
+    border:2px solid rgba(255,255,255,0.1);
+    border-radius:8px;
+    cursor:pointer;
+    transition:all .18s;
+  }
+  .theme-btn:hover{ transform:scale(1.08); border-color:rgba(255,255,255,0.3); }
+  .theme-btn.active{ border-color:var(--accent); box-shadow:0 0 16px rgba(0,212,255,0.3); }
 
   .grid{ display:grid; grid-template-columns: 1fr 340px; gap:16px; align-items:start; margin-top:8px; }
   @media (max-width:920px){ .grid{grid-template-columns:1fr} }
@@ -216,23 +254,6 @@
 
   .spark { pointer-events:none; position:fixed; z-index:5; mix-blend-mode:screen; will-change:transform, opacity; }
   .help-line{ font-size:0.8rem; color:var(--muted); margin-top:8px; }
-
-  .theme-panel{
-    background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
-    padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03);
-    margin-top:8px;
-  }
-  .theme-label{ font-size:0.85rem; color:var(--muted); margin-bottom:8px; display:block; font-weight:600; }
-  .theme-colors{ display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; }
-  .theme-btn{
-    width:100%; aspect-ratio:1;
-    border:2px solid rgba(255,255,255,0.1);
-    border-radius:8px;
-    cursor:pointer;
-    transition:all .18s;
-  }
-  .theme-btn:hover{ transform:scale(1.08); border-color:rgba(255,255,255,0.3); }
-  .theme-btn.active{ border-color:var(--accent); box-shadow:0 0 16px rgba(0,212,255,0.3); }
 </style>
 </head>
 <body>
@@ -259,6 +280,10 @@
         <button id="fxToggle" class="toggle" title="Wyłącz/powiedz FX">FX: ON</button>
         <button id="confettiToggle" class="toggle" title="Tryb konfetti przy dodawaniu">Konfetti: OFF</button>
         <button id="shareBtn" class="toggle" title="Kopiuj link ze stanem">Udostępnij</button>
+        <div class="theme-dropdown" id="themeDropdown">
+          <label class="theme-label-header">Zmień tło</label>
+          <div class="theme-colors" id="themeColors"></div>
+        </div>
       </div>
     </header>
 
@@ -279,11 +304,6 @@ Nic nie wybrano jeszcze.
           <button id="kopiuj-liste-btn" style="margin-top:16px;width:100%;padding:14px;background:#00d4ff;color:#000;border:none;border-radius:8px;font-weight:700;font-size:1.1rem;cursor:pointer;">
             Kopiuj podsumowanie
           </button>
-        </div>
-
-        <div class="theme-panel">
-          <label class="theme-label">Zmień tło</label>
-          <div class="theme-colors" id="themeColors"></div>
         </div>
         
         <button class="actionBtn discountBtn" id="discount20Btn" title="Obniż cenę o 20%">20% zniżki: OFF</button>
@@ -326,7 +346,7 @@ Nic nie wybrano jeszcze.
     - Performance tweaks: lower particle counts, throttled pointer updates, reuse bursts, optimized rAF loops.
     - Settings persisted separately (FX on/off, confetti).
     - 20%, 25%, and 30% discount buttons
-    - Theme selector for background colors
+    - Theme selector dropdown in header
   - UX: small hints, keyboard shortcuts unchanged.
 */
 
@@ -432,6 +452,7 @@ const discountInfo25 = document.getElementById('discountInfo25');
 const discount30Btn = document.getElementById('discount30Btn');
 const discountInfo30 = document.getElementById('discountInfo30');
 const themeColorsEl = document.getElementById('themeColors');
+const themeDropdown = document.getElementById('themeDropdown');
 
 loadState();
 loadSettings();
@@ -475,6 +496,22 @@ function updateThemeUI(){
 initThemes();
 const themeObj = THEMES.find(t => t.id === settings.theme);
 if(themeObj) applyTheme(themeObj.color);
+
+/* Theme dropdown toggle */
+shareBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  themeDropdown.classList.toggle('visible');
+});
+
+/* Close dropdown when clicking outside */
+document.addEventListener('click', () => {
+  themeDropdown.classList.remove('visible');
+});
+
+/* Prevent closing when clicking inside dropdown */
+themeDropdown.addEventListener('click', (e) => {
+  e.stopPropagation();
+});
 
 /* UI: Tabs */
 function getCategoryCount(cat){
@@ -792,22 +829,6 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
   copiedHint.textContent = 'Skopiowano kwotę: ' + kwota;
   copiedHint.style.opacity = 1;
   setTimeout(() => copiedHint.style.opacity = 0, 1200);
-});
-
-/* Share: encode state in URL (base64) and copy */
-shareBtn.addEventListener('click', async () => {
-  const payload = { counts: state.counts, total: state.total, discount20: state.discount20, discount25: state.discount25, discount30: state.discount30 };
-  const encoded = btoa(JSON.stringify(payload));
-  const url = new URL(location.href);
-  url.searchParams.set('state', encoded);
-  try {
-    await navigator.clipboard.writeText(url.toString());
-    shareBtn.textContent = 'Skopiowano!';
-    setTimeout(()=> shareBtn.textContent = 'Udostępnij', 1200);
-  } catch(e){
-    shareBtn.textContent = 'Błąd';
-    setTimeout(()=> shareBtn.textContent = 'Udostępnij', 1200);
-  }
 });
 
 /* Load state from URL if provided (merge) */
