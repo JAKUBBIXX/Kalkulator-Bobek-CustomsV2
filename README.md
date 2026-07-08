@@ -127,7 +127,7 @@
     border:1px solid rgba(255,255,255,0.03);
     border-radius:10px;
     padding:12px;
-    min-width:200px;
+    min-width:240px;
     display:none;
     opacity:0;
     transform:translateY(-8px);
@@ -144,7 +144,7 @@
   }
 
   .theme-label-header{ font-size:0.85rem; color:var(--muted); margin-bottom:10px; display:block; font-weight:600; }
-  .theme-colors{ display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; }
+  .theme-colors{ display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; }
   .theme-btn{
     width:100%; aspect-ratio:1;
     border:2px solid rgba(255,255,255,0.1);
@@ -279,9 +279,9 @@
         </div>
         <button id="fxToggle" class="toggle" title="Wyłącz/powiedz FX">FX: ON</button>
         <button id="confettiToggle" class="toggle" title="Tryb konfetti przy dodawaniu">Konfetti: OFF</button>
-        <button id="shareBtn" class="toggle" title="Kopiuj link ze stanem">Udostępnij</button>
+        <button id="themeBtn" class="toggle" title="Zmień kolor tła">🎨 Tło</button>
         <div class="theme-dropdown" id="themeDropdown">
-          <label class="theme-label-header">Zmień tło</label>
+          <label class="theme-label-header">Wybierz kolor tła</label>
           <div class="theme-colors" id="themeColors"></div>
         </div>
       </div>
@@ -340,13 +340,12 @@ Nic nie wybrano jeszcze.
   - Color changed to cyan, but added:
     - Search box (live filter).
     - FX toggle (on/off) and Confetti toggle for extra dramatic effect.
-    - Share (copy link) with encoded cart state.
     - Shift+click quick-add (+5).
     - "Wszystkie" now grouped by category (collapsible as before).
     - Performance tweaks: lower particle counts, throttled pointer updates, reuse bursts, optimized rAF loops.
     - Settings persisted separately (FX on/off, confetti).
     - 20%, 25%, and 30% discount buttons
-    - Theme selector dropdown in header
+    - Theme selector dropdown in header with multiple color options
   - UX: small hints, keyboard shortcuts unchanged.
 */
 
@@ -400,7 +399,13 @@ const THEMES = [
   { id: 'maroon', color: '#3d1620', label: 'Maroon' },
   { id: 'slate', color: '#1a1f2e', label: 'Slate' },
   { id: 'midnight', color: '#0f0f1e', label: 'Midnight' },
-  { id: 'charcoal', color: '#1a1a1a', label: 'Charcoal' }
+  { id: 'charcoal', color: '#1a1a1a', label: 'Charcoal' },
+  { id: 'pink', color: '#3d1a2a', label: 'Pink' },
+  { id: 'rose', color: '#4a1a3d', label: 'Rose' },
+  { id: 'coral', color: '#3d2520', label: 'Coral' },
+  { id: 'teal', color: '#0d2d2a', label: 'Teal' },
+  { id: 'indigo', color: '#1a1a3d', label: 'Indigo' },
+  { id: 'amber', color: '#3d2a0d', label: 'Amber' }
 ];
 
 const STORAGE_KEY = 'bennys_cyan_v2_state';
@@ -444,7 +449,7 @@ const copiedHint = document.getElementById('copiedHint');
 const fxToggle = document.getElementById('fxToggle');
 const confettiToggle = document.getElementById('confettiToggle');
 const searchInput = document.getElementById('searchInput');
-const shareBtn = document.getElementById('shareBtn');
+const themeBtn = document.getElementById('themeBtn');
 const discount20Btn = document.getElementById('discount20Btn');
 const discountInfo20 = document.getElementById('discountInfo20');
 const discount25Btn = document.getElementById('discount25Btn');
@@ -498,7 +503,7 @@ const themeObj = THEMES.find(t => t.id === settings.theme);
 if(themeObj) applyTheme(themeObj.color);
 
 /* Theme dropdown toggle */
-shareBtn.addEventListener('click', (e) => {
+themeBtn.addEventListener('click', (e) => {
   e.stopPropagation();
   themeDropdown.classList.toggle('visible');
 });
@@ -810,7 +815,7 @@ function onServiceClick(e){
   else if(action === 'dec') changeCount(idx, -1, origin);
 }
 
-/* Reset, copy, share */
+/* Reset, copy */
 document.getElementById('resetBtn').addEventListener('click', ()=> {
   state.counts = new Array(SERVICES.length).fill(0);
   state.total = 0;
