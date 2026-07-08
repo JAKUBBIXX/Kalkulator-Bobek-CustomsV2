@@ -216,6 +216,23 @@
 
   .spark { pointer-events:none; position:fixed; z-index:5; mix-blend-mode:screen; will-change:transform, opacity; }
   .help-line{ font-size:0.8rem; color:var(--muted); margin-top:8px; }
+
+  .theme-panel{
+    background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+    padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03);
+    margin-top:8px;
+  }
+  .theme-label{ font-size:0.85rem; color:var(--muted); margin-bottom:8px; display:block; font-weight:600; }
+  .theme-colors{ display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; }
+  .theme-btn{
+    width:100%; aspect-ratio:1;
+    border:2px solid rgba(255,255,255,0.1);
+    border-radius:8px;
+    cursor:pointer;
+    transition:all .18s;
+  }
+  .theme-btn:hover{ transform:scale(1.08); border-color:rgba(255,255,255,0.3); }
+  .theme-btn.active{ border-color:var(--accent); box-shadow:0 0 16px rgba(0,212,255,0.3); }
 </style>
 </head>
 <body>
@@ -263,6 +280,11 @@ Nic nie wybrano jeszcze.
             Kopiuj podsumowanie
           </button>
         </div>
+
+        <div class="theme-panel">
+          <label class="theme-label">Zmień tło</label>
+          <div class="theme-colors" id="themeColors"></div>
+        </div>
         
         <button class="actionBtn discountBtn" id="discount20Btn" title="Obniż cenę o 20%">20% zniżki: OFF</button>
         <div class="discountInfo" id="discountInfo20">Zniżka nieaktywna.</div>
@@ -304,6 +326,7 @@ Nic nie wybrano jeszcze.
     - Performance tweaks: lower particle counts, throttled pointer updates, reuse bursts, optimized rAF loops.
     - Settings persisted separately (FX on/off, confetti).
     - 20%, 25%, and 30% discount buttons
+    - Theme selector for background colors
   - UX: small hints, keyboard shortcuts unchanged.
 */
 
@@ -349,6 +372,17 @@ const SERVICES = [
 
 const CATS = ["Wszystkie", ...Array.from(new Set(SERVICES.map(s=>s.cat)))];
 
+const THEMES = [
+  { id: 'dark', color: '#070506', label: 'Dark' },
+  { id: 'ocean', color: '#0a1628', label: 'Ocean' },
+  { id: 'forest', color: '#0d2818', label: 'Forest' },
+  { id: 'purple', color: '#2d1b4e', label: 'Purple' },
+  { id: 'maroon', color: '#3d1620', label: 'Maroon' },
+  { id: 'slate', color: '#1a1f2e', label: 'Slate' },
+  { id: 'midnight', color: '#0f0f1e', label: 'Midnight' },
+  { id: 'charcoal', color: '#1a1a1a', label: 'Charcoal' }
+];
+
 const STORAGE_KEY = 'bennys_cyan_v2_state';
 const SETTINGS_KEY = 'bennys_cyan_v2_settings';
 let state = {
@@ -363,7 +397,8 @@ let state = {
 let settings = {
   fx: true,
   confetti: false,
-  particleIntensity: 1 // 0.5 .. 2
+  particleIntensity: 1, // 0.5 .. 2
+  theme: 'dark'
 };
 
 function fmt(n){ return n.toLocaleString('pl-PL'); }
@@ -377,7 +412,7 @@ function getDiscountedTotal(){
 function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
 function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ const s = JSON.parse(raw); if(Array.isArray(s.counts) && typeof s.total === 'number'){ const arr = new Array(SERVICES.length).fill(0); for(let i=0;i<Math.min(arr.length, s.counts.length); i++) arr[i] = Number(s.counts[i])||0; state.counts = arr; state.total = Number(s.total)||0; if(s.selectedCat) state.selectedCat = s.selectedCat; if(s.collapsed) state.collapsed = s.collapsed; if(typeof s.discount20 === 'boolean') state.discount20 = s.discount20; if(typeof s.discount25 === 'boolean') state.discount25 = s.discount25; if(typeof s.discount30 === 'boolean') state.discount30 = s.discount30; } } }catch(e){} }
 function saveSettings(){ try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }catch(e){} }
-function loadSettings(){ try{ const raw = localStorage.getItem(SETTINGS_KEY); if(raw){ const s = JSON.parse(raw); if(typeof s.fx === 'boolean') settings.fx = s.fx; if(typeof s.confetti === 'boolean') settings.confetti = s.confetti; if(typeof s.particleIntensity === 'number') settings.particleIntensity = s.particleIntensity; } }catch(e){} }
+function loadSettings(){ try{ const raw = localStorage.getItem(SETTINGS_KEY); if(raw){ const s = JSON.parse(raw); if(typeof s.fx === 'boolean') settings.fx = s.fx; if(typeof s.confetti === 'boolean') settings.confetti = s.confetti; if(typeof s.particleIntensity === 'number') settings.particleIntensity = s.particleIntensity; if(typeof s.theme === 'string') settings.theme = s.theme; } }catch(e){} }
 
 /* DOM refs */
 const listEl = document.getElementById('servicesList');
@@ -396,9 +431,50 @@ const discount25Btn = document.getElementById('discount25Btn');
 const discountInfo25 = document.getElementById('discountInfo25');
 const discount30Btn = document.getElementById('discount30Btn');
 const discountInfo30 = document.getElementById('discountInfo30');
+const themeColorsEl = document.getElementById('themeColors');
 
 loadState();
 loadSettings();
+
+/* Theme system */
+function initThemes(){
+  THEMES.forEach(theme => {
+    const btn = document.createElement('button');
+    btn.className = 'theme-btn' + (settings.theme === theme.id ? ' active' : '');
+    btn.style.backgroundColor = theme.color;
+    btn.title = theme.label;
+    btn.addEventListener('click', () => {
+      settings.theme = theme.id;
+      saveSettings();
+      applyTheme(theme.color);
+      updateThemeUI();
+    });
+    themeColorsEl.appendChild(btn);
+  });
+}
+
+function applyTheme(bgColor){
+  document.body.style.background = `linear-gradient(180deg, ${bgColor} 0%, ${adjustBrightness(bgColor, -10)} 100%)`;
+}
+
+function adjustBrightness(color, percent) {
+  const num = parseInt(color.replace("#",""), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+  const G = Math.max(0, Math.min(255, (num >> 8 & 0x00FF) + amt));
+  const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+  return "#" + (0x1000000 + (R<<16) + (G<<8) + B).toString(16).slice(1);
+}
+
+function updateThemeUI(){
+  Array.from(themeColorsEl.querySelectorAll('.theme-btn')).forEach((btn, idx) => {
+    btn.classList.toggle('active', settings.theme === THEMES[idx].id);
+  });
+}
+
+initThemes();
+const themeObj = THEMES.find(t => t.id === settings.theme);
+if(themeObj) applyTheme(themeObj.color);
 
 /* UI: Tabs */
 function getCategoryCount(cat){
