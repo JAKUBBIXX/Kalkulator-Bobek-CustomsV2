@@ -262,7 +262,7 @@ Nic nie wybrano jeszcze.
         <button class="actionBtn discountBtn" id="discount20Btn" title="Obniż cenę o 20%">20% zniżki: OFF</button>
         <div class="discountInfo" id="discountInfo20">Zniżka nieaktywna.</div>
 
-        <button class="actionBtn discountBtn" id="discount25Btn" title="Obniż cenę o 25%">25% zniżki: OFF</button>
+        <button class="actionBtn discountBtn" id="discount25Btn" title="Obniż cenę o 30%">25% zniżki: OFF</button>
         <div class="discountInfo" id="discountInfo">Zniżka nieaktywna.</div>
 
         <div>
