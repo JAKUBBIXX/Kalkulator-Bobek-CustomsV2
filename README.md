@@ -98,120 +98,6 @@
     border:1px solid rgba(255,255,255,0.03);
     padding:8px 10px;
     border-radius:10px;
-... (Pozostałe wiersze: 1008)
-
-message.txt
-45 KB
-<!doctype html>
-<html lang="pl">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Kalkulator Bobek Customs — Cyan Edition (v2)</title>
-
-message.txt
-42 KB
-﻿
-<!doctype html>
-<html lang="pl">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Kalkulator Bobek Customs — Cyan Edition (v2)</title>
-<meta name="description" content="Kalkulator dla pracowników Bobek Customs" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#070506;
-    --card:#11090a;
-    --muted:#a7a0a2;
-    --accent:#00d4ff;       /* primary cyan */
-    --accent-2:#00a8cc;     /* stronger cyan */
-    --accent-glow: rgba(0,212,255,0.14);
-    --success:#22c55e;
-    --danger:#ef4444;
-    --glass: rgba(255,255,255,0.02);
-    --radius:12px;
-    --gap:14px;
-    --shadow: 0 10px 40px rgba(2,6,23,0.7);
-    --mono: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-    --tab-active: rgba(0,212,255,0.10);
-    --tab-border: rgba(255,255,255,0.03);
-    --small: 0.86rem;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; animation: none !important; }
-  }
-
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family:var(--mono);
-    background:linear-gradient(180deg,var(--bg) 0%, #040203 100%);
-    color:#f5eaea;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    overflow:hidden;
-  }
-
-  /* background canvases */
-  #bgCanvas, #fxCanvas {
-    position:fixed;
-    inset:0;
-    z-index:0;
-    pointer-events:none;
-    will-change:transform;
-  }
-
-  .app{
-    width:min(980px, 96vw);
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:calc(var(--radius) + 6px);
-    padding:18px;
-    box-shadow:var(--shadow);
-    overflow:hidden;
-    position:relative;
-    z-index:3;
-  }
-
-  header{
-    display:flex;
-    gap:12px;
-    align-items:center;
-    margin-bottom:10px;
-  }
-  .brand { display:flex; gap:12px; align-items:center; }
-  .logo {
-    width:42px; height:42px;
-    display:inline-grid; place-items:center;
-    border-radius:10px;
-    background:linear-gradient(135deg, rgba(0,212,255,0.12), rgba(0,168,204,0.06));
-    border:1px solid rgba(255,255,255,0.03);
-    flex-shrink:0;
-  }
-  .logo svg{width:24px;height:24px; fill:var(--accent)}
-  h1{ margin:0; font-weight:700; font-size:1.02rem; letter-spacing:-0.02em; }
-  p.lead{ margin:0; color:var(--muted); font-size:0.84rem; }
-
-  /* controls panel (search + toggles) */
-  .controls-bar{
-    margin-left:auto;
-    display:flex;
-    gap:8px;
-    align-items:center;
-  }
-  .search{
-    background:rgba(255,255,255,0.02);
-    border:1px solid rgba(255,255,255,0.03);
-    padding:8px 10px;
-    border-radius:10px;
     color:var(--muted);
     display:flex;
     gap:8px;
@@ -376,11 +262,8 @@ Nic nie wybrano jeszcze.
         <button class="actionBtn discountBtn" id="discount20Btn" title="Obniż cenę o 20%">20% zniżki: OFF</button>
         <div class="discountInfo" id="discountInfo20">Zniżka nieaktywna.</div>
 
-        <button class="actionBtn discountBtn" id="discount25Btn" title="Obniż cenę o 25%">25% zniżki: OFF</button>
+        <button class="actionBtn discountBtn" id="discount25Btn" title="Obniż cenę o 30%">30% zniżki: OFF</button>
         <div class="discountInfo" id="discountInfo">Zniżka nieaktywna.</div>
-
-        <button class="actionBtn discountBtn" id="discount30Btn" title="Obniż cenę o 30%">30% zniżki: OFF</button>
-        <div class="discountInfo" id="discountInfo30">Zniżka nieaktywna.</div>
 
         <div>
           <div class="totalLabel">Kwota całkowita</div>
@@ -412,7 +295,7 @@ Nic nie wybrano jeszcze.
     - "Wszystkie" now grouped by category (collapsible as before).
     - Performance tweaks: lower particle counts, throttled pointer updates, reuse bursts, optimized rAF loops.
     - Settings persisted separately (FX on/off, confetti).
-    - 20%, 25%, and 30% discount buttons
+    - 20% and 25% discount buttons
   - UX: small hints, keyboard shortcuts unchanged.
 */
 
@@ -466,8 +349,7 @@ let state = {
   selectedCat: "Wszystkie",
   collapsed: {},
   discount20: false,
-  discount25: false,
-  discount30: false
+  discount25: false
 };
 let settings = {
   fx: true,
@@ -479,12 +361,11 @@ function fmt(n){ return n.toLocaleString('pl-PL'); }
 function getDiscountedTotal(){
   if(state.discount20) return Math.round(state.total * 0.80);
   if(state.discount25) return Math.round(state.total * 0.75);
-  if(state.discount30) return Math.round(state.total * 0.70);
   return state.total;
 }
 
 function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
-function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ const s = JSON.parse(raw); if(Array.isArray(s.counts) && typeof s.total === 'number'){ const arr = new Array(SERVICES.length).fill(0); for(let i=0;i<Math.min(arr.length, s.counts.length); i++) arr[i] = Number(s.counts[i])||0; state.counts = arr; state.total = Number(s.total)||0; if(s.selectedCat) state.selectedCat = s.selectedCat; if(s.collapsed) state.collapsed = s.collapsed; if(typeof s.discount20 === 'boolean') state.discount20 = s.discount20; if(typeof s.discount25 === 'boolean') state.discount25 = s.discount25; if(typeof s.discount30 === 'boolean') state.discount30 = s.discount30; } } }catch(e){} }
+function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ const s = JSON.parse(raw); if(Array.isArray(s.counts) && typeof s.total === 'number'){ const arr = new Array(SERVICES.length).fill(0); for(let i=0;i<Math.min(arr.length, s.counts.length); i++) arr[i] = Number(s.counts[i])||0; state.counts = arr; state.total = Number(s.total)||0; if(s.selectedCat) state.selectedCat = s.selectedCat; if(s.collapsed) state.collapsed = s.collapsed; if(typeof s.discount20 === 'boolean') state.discount20 = s.discount20; if(typeof s.discount25 === 'boolean') state.discount25 = s.discount25; } } }catch(e){} }
 function saveSettings(){ try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }catch(e){} }
 function loadSettings(){ try{ const raw = localStorage.getItem(SETTINGS_KEY); if(raw){ const s = JSON.parse(raw); if(typeof s.fx === 'boolean') settings.fx = s.fx; if(typeof s.confetti === 'boolean') settings.confetti = s.confetti; if(typeof s.particleIntensity === 'number') settings.particleIntensity = s.particleIntensity; } }catch(e){} }
 
@@ -503,8 +384,6 @@ const discount20Btn = document.getElementById('discount20Btn');
 const discountInfo20 = document.getElementById('discountInfo20');
 const discount25Btn = document.getElementById('discount25Btn');
 const discountInfo = document.getElementById('discountInfo');
-const discount30Btn = document.getElementById('discount30Btn');
-const discountInfo30 = document.getElementById('discountInfo30');
 
 loadState();
 loadSettings();
@@ -735,18 +614,6 @@ function updateUI(){
       discountInfo.textContent = 'Zniżka nieaktywna.';
     }
   }
-  if(discount30Btn){
-    discount30Btn.classList.toggle('active', state.discount30);
-    discount30Btn.textContent = state.discount30 ? '30% zniżki: ON' : '30% zniżki: OFF';
-  }
-  if(discountInfo30){
-    if(state.discount30 && state.total > 0){
-      const znizka = state.total - getDiscountedTotal();
-      discountInfo30.innerHTML = `Cena przed zniżką: <strong>${fmt(state.total)} $</strong><br>Obniżono o: <strong>${fmt(znizka)} $</strong>`;
-    } else {
-      discountInfo30.textContent = 'Zniżka nieaktywna.';
-    }
-  }
   itemsCountEl.textContent = state.counts.reduce((a,b)=>a+b, 0);
 
   tabsEl.querySelectorAll('.tab').forEach((t, idx) => {
@@ -812,7 +679,6 @@ document.getElementById('resetBtn').addEventListener('click', ()=> {
   state.total = 0;
   state.discount20 = false;
   state.discount25 = false;
-  state.discount30 = false;
   persistAndRender();
   createTabs();
   renderListAnimated();
@@ -829,7 +695,7 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
 
 /* Share: encode state in URL (base64) and copy */
 shareBtn.addEventListener('click', async () => {
-  const payload = { counts: state.counts, total: state.total, discount20: state.discount20, discount25: state.discount25, discount30: state.discount30 };
+  const payload = { counts: state.counts, total: state.total, discount20: state.discount20, discount25: state.discount25 };
   const encoded = btoa(JSON.stringify(payload));
   const url = new URL(location.href);
   url.searchParams.set('state', encoded);
@@ -859,7 +725,6 @@ shareBtn.addEventListener('click', async () => {
         state.total = Number(obj.total) || state.counts.reduce((sum, c, i) => sum + (c * SERVICES[i].price), 0);
         state.discount20 = !!obj.discount20;
         state.discount25 = !!obj.discount25;
-        state.discount30 = !!obj.discount30;
         saveState();
       }
     }
@@ -871,7 +736,6 @@ if (discount20Btn) {
   discount20Btn.addEventListener('click', () => {
     state.discount20 = !state.discount20;
     state.discount25 = false;
-    state.discount30 = false;
     saveState();
     animateTotal();
     updateUI();
@@ -882,18 +746,6 @@ if (discount25Btn) {
   discount25Btn.addEventListener('click', () => {
     state.discount25 = !state.discount25;
     state.discount20 = false;
-    state.discount30 = false;
-    saveState();
-    animateTotal();
-    updateUI();
-  });
-}
-
-if (discount30Btn) {
-  discount30Btn.addEventListener('click', () => {
-    state.discount30 = !state.discount30;
-    state.discount20 = false;
-    state.discount25 = false;
     saveState();
     animateTotal();
     updateUI();
@@ -1164,8 +1016,6 @@ function aktualizujListeWybranych() {
       el.textContent = linie.length ? linie.join('\n') + `\n\nSuma przed zniżką: ${fmt(suma)}$\nZniżka 20%: -${fmt(suma - Math.round(suma * 0.80))}$\nSuma po zniżce: ${fmt(Math.round(suma * 0.80))}$` : 'Nic nie wybrano jeszcze.';
     } else if(state.discount25){
       el.textContent = linie.length ? linie.join('\n') + `\n\nSuma przed zniżką: ${fmt(suma)}$\nZniżka 25%: -${fmt(suma - Math.round(suma * 0.75))}$\nSuma po zniżce: ${fmt(Math.round(suma * 0.75))}$` : 'Nic nie wybrano jeszcze.';
-    } else if(state.discount30){
-      el.textContent = linie.length ? linie.join('\n') + `\n\nSuma przed zniżką: ${fmt(suma)}$\nZniżka 30%: -${fmt(suma - Math.round(suma * 0.70))}$\nSuma po zniżce: ${fmt(Math.round(suma * 0.70))}$` : 'Nic nie wybrano jeszcze.';
     } else {
       el.textContent = linie.length ? linie.join('\n') + `\n\nSuma: ${fmt(suma)}$` : 'Nic nie wybrano jeszcze.';
     }
