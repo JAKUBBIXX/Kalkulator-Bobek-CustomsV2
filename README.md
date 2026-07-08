@@ -189,6 +189,7 @@
     background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
     padding:18px; border-radius:12px; border:1px solid rgba(255,255,255,0.03);
     position:sticky; top:20px; display:flex; flex-direction:column; gap:12px; align-items:stretch;
+    max-height:62vh; overflow:auto; padding-right:6px;
   }
   .totalLabel{ font-size:0.9rem; color:var(--muted); margin-bottom:6px }
   .totalValue{ font-weight:800; font-size:2.05rem; color:var(--accent); display:flex; align-items:baseline; gap:8px; will-change:transform, box-shadow; }
@@ -206,6 +207,9 @@
 
   .list::-webkit-scrollbar{ width:8px }
   .list::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.03); border-radius:8px }
+
+  .summary::-webkit-scrollbar{ width:8px }
+  .summary::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.03); border-radius:8px }
 
   .hint{ font-size:0.82rem; color:var(--muted) }
   .badge{ font-size:0.78rem; padding:6px 8px; border-radius:999px; background:rgba(255,255,255,0.02); color:var(--muted); }
@@ -249,16 +253,17 @@
         <div class="help-line">Shift+klik = +5, klik = +1. Wyszukaj, wybierz kategorię, udostępnij link (zachowuje Twój koszyk).</div>
       </div>
 
-      <aside class="summary" aria-label="Podsumowanie zamówienia"> 
-      <div id="wybrane-czesci" style="margin-top:24px;padding:20px;background:#000;border:2px solid #00d4ff;border-radius:12px;color:#fff;">
-  <h3 style="margin:0 0 16px;text-align:center;color:#00d4ff;font-size:1.3rem;font-weight:700;">Twoje podsumowanie</h3>
- <pre id="lista-wybranych" style="background:#111;padding:12px;border-radius:10px;white-space:pre-wrap;font-family:monospace;font-size:0.85rem;color:#fff;min-height:100px;margin:0;line-height:1.35;border:1px solid #00d4ff33;overflow-y:auto;max-height:300px;">
+      <aside class="summary" aria-label="Podsumowanie zamówienia">
+        <div id="wybrane-czesci" style="padding:20px;background:#000;border:2px solid #00d4ff;border-radius:12px;color:#fff;">
+          <h3 style="margin:0 0 16px;text-align:center;color:#00d4ff;font-size:1.3rem;font-weight:700;">Twoje podsumowanie</h3>
+          <pre id="lista-wybranych" style="background:#111;padding:12px;border-radius:10px;white-space:pre-wrap;font-family:monospace;font-size:0.85rem;color:#fff;min-height:100px;margin:0;line-height:1.35;border:1px solid #00d4ff33;overflow-y:auto;max-height:300px;">
 Nic nie wybrano jeszcze.
 </pre>
-  <button id="kopiuj-liste-btn" style="margin-top:16px;width:100%;padding:14px;background:#00d4ff;color:#000;border:none;border-radius:8px;font-weight:700;font-size:1.1rem;cursor:pointer;">
-    Kopiuj podsumowanie
-  </button>
-</div>
+          <button id="kopiuj-liste-btn" style="margin-top:16px;width:100%;padding:14px;background:#00d4ff;color:#000;border:none;border-radius:8px;font-weight:700;font-size:1.1rem;cursor:pointer;">
+            Kopiuj podsumowanie
+          </button>
+        </div>
+        
         <button class="actionBtn discountBtn" id="discount20Btn" title="Obniż cenę o 20%">20% zniżki: OFF</button>
         <div class="discountInfo" id="discountInfo20">Zniżka nieaktywna.</div>
 
